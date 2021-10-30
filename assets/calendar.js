@@ -14,7 +14,7 @@ if (typeof jQuery=='undefined') {
 }
 
 function whenJqReady() {
-	var verbose = false;
+	var verbose = true;
 	var defaultLocale = 'en';
 	var cfgWeekNums = jQuery('#weeknums').text();	//	get Paramter from DOM
 	weekNums = false;
@@ -32,16 +32,22 @@ function whenJqReady() {
 	}
 	var calUrls = [];
 	var calNames = [];
-	var loc = window.location;  // the current page
+	var domain = document.domain;  // the current page
+    var protocol = location.protocol;
+    if (verbose) console.log('domain:', domain);
 	pagecalendars.forEach(function(value, index) {
 		if (value) {
-			url = loc + '/' + value;
+			url = protocol + '//' + domain + '/' + value;
 			calUrls.push(url);
-			calNames.push(value);
+            var filename = value.split('/').pop();
+            if (verbose) console.log('filename:', filename);
+			calNames.push(filename);
 		}
 	})
 
 	if (verbose)    console.log('pagecalendars:', pagecalendars);
+	if (verbose)    console.log('calUrls:', calUrls);
+	if (verbose)    console.log('calNames:', calNames);
 
 	var cfgFilestring = jQuery('#cfgFilestring').text();	//	get Paramter from DOM
 	if (verbose) console.log('cfgfilestring:', cfgFilestring);
@@ -75,7 +81,7 @@ function whenJqReady() {
 			var calName = value;
 			if (verbose) console.log('yaml CFG File:' + cfgFile);
 			// allow remote ics files, these are handeled by local CORS proxy now
-			if (cfgFile.startsWith("https://") || cfgFile.startsWith("http://")) {	// calendar URL is remote
+			if (cfgFile.startsWith("https://") || cfgFile.startsWith("http://") || cfgFile.startsWith("//")) {	// calendar URL is remote
 				// automatically add CORS proxy URL for remote calendars, if not yet done 06.04.20 - this is obsolete from v 0.2.8 - local proxy
 
 				calendarUrl = cfgFile;	// always :-)	-	see axjax proxy below 12.05.21
@@ -301,7 +307,8 @@ function makeUL(array, colors) {
 
 function getAbsolutePath() { // see https://www.sitepoint.com/jquery-current-page-url/
     var loc = window.location;
-    //  console.log('window.location:', loc);
+    console.log('window.location:', loc);
+    console.log("doc ", document);
     var pathName = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1);
     return loc.href.substring(0, loc.href.length - ((loc.pathname + loc.search + loc.hash).length - pathName.length));
 }

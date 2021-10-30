@@ -13,7 +13,7 @@
 				{% if debug %}  {{ dump(file|print_r) }}  {% endif %}
 				{% if (file.filename|ends_with('.ics')) %}
 					{% if (debug) %}    {{ dump(file.filename|string) }}    {% endif %}
-					{% set calendars = calendars|merge([file.filename|string])  %}
+					{% set calendars = calendars|merge([file.url|string]) %}
 					{% set numcalendars = numcalendars + 1 %}
 				{% endif %}
 				{% if (file.filename|ends_with('.jpg')) %}
@@ -21,7 +21,7 @@
 					{% set num_mpics = num_mpics + 1 %}
 				{% endif %}
 			{% endfor %}
-			{% if (debug) %}    
+			{% if (debug) %}
 				{{ dump(numcalendars) }}
 				{{ dump(num_mpics) }}
 				{{ dump(calendars|print_r) }}
